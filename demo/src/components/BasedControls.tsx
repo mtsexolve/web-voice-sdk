@@ -15,10 +15,11 @@ export function BasedControls() {
 		sdk().registered ? unregister() : register();
 	};
 
-	const handleStartCall = () => {
-		if (!sdk().registered) register().catch(console.log);
-		const session = sdk().instance?.call($target.get());
-		session && $sessionMutations.setSession({ from: settings().sipUserName, to: $target.get() }, session);
+	const handleStartCall = async () => {
+		if (!sdk().registered) await register().catch(console.log);
+		const session = await sdk().instance?.call($target.get());
+		session &&
+			$sessionMutations.setSession({ from: settings().sipUserName, to: $target.get() }, session.session);
 	};
 
 	return (
