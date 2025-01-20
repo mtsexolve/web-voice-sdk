@@ -240,6 +240,13 @@ export function createSipInstance(props: CreateSipInstanceProps) {
 		}
 	};
 
+	// Вспомогательная функция для получения следующей линии
+	const getNextLineId = (): string | null => {
+		const iterator = activeCalls.keys();
+		const next = iterator.next();
+		return next.done ? null : next.value;
+	};
+
 	return {
 		/** Получить экземпляр JsSIP UA */
 		get SIPInstance() {
@@ -347,7 +354,7 @@ export function createSipInstance(props: CreateSipInstanceProps) {
 						props.lineEvents.onLineRemoved(callId);
 					}
 					if (currentCallId === callId) {
-						const nextLineId = activeCalls.size > 0 ? activeCalls.keys().next().value : null;
+						const nextLineId = getNextLineId();
 						currentCallId = nextLineId;
 						notifyActiveLineChanged(nextLineId);
 					}
@@ -359,7 +366,7 @@ export function createSipInstance(props: CreateSipInstanceProps) {
 						props.lineEvents.onLineRemoved(callId);
 					}
 					if (currentCallId === callId) {
-						const nextLineId = activeCalls.size > 0 ? activeCalls.keys().next().value : null;
+						const nextLineId = getNextLineId();
 						currentCallId = nextLineId;
 						notifyActiveLineChanged(nextLineId);
 					}
@@ -447,7 +454,7 @@ export function createSipInstance(props: CreateSipInstanceProps) {
 					props.lineEvents.onLineRemoved(callId);
 				}
 				if (currentCallId === callId) {
-					const nextLineId = activeCalls.size > 0 ? activeCalls.keys().next().value : null;
+					const nextLineId = getNextLineId();
 					currentCallId = nextLineId;
 					notifyActiveLineChanged(nextLineId);
 				}
@@ -459,7 +466,7 @@ export function createSipInstance(props: CreateSipInstanceProps) {
 					props.lineEvents.onLineRemoved(callId);
 				}
 				if (currentCallId === callId) {
-					const nextLineId = activeCalls.size > 0 ? activeCalls.keys().next().value : null;
+					const nextLineId = getNextLineId();
 					currentCallId = nextLineId;
 					notifyActiveLineChanged(nextLineId);
 				}
