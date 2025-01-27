@@ -164,7 +164,7 @@ export type AudioDevice = {
 export function createSipInstance(props: CreateSipInstanceProps) {
 	// Значения по умолчанию
 	const defaultWSUrl = props.ssl ? "wss://webrtc.exolve.ru:8443" : "ws://webrtc.exolve.ru:8080";
-	const defaultRealm = "80.75.132.120";
+	const defaultRealm = "sip.exolve.ru";
 	const defaultStunList = ["stun:webrtc.exolve.ru:3479"];
 
 	const environment = {
@@ -290,7 +290,7 @@ export function createSipInstance(props: CreateSipInstanceProps) {
 		 */
 		onIncomingCall(cb: (args: OnIncomingCallCbArgs) => void) {
 			SIPInstance.on("newRTCSession", (event: IncomingRTCSessionEvent) => {
-				if (event.originator !== Originator.REMOTE) return;
+				if (event.originator !== 'remote') return;
 
 				// Проверяем лимит линий
 				if (props.maxLines && activeCalls.size >= props.maxLines) {
