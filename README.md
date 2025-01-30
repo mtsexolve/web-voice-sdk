@@ -28,9 +28,9 @@
 ## Установка
 
 ```bash
-npm install web-voice-sdk
+npm install @mts-exolve/web-voice-sdk
 # или
-yarn add web-voice-sdk
+yarn add @mts-exolve/web-voice-sdk
 ```
 
 ## Основные возможности
