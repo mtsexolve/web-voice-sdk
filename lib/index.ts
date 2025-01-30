@@ -1,6 +1,5 @@
 import JsSIP from "jssip";
 import {
-	Originator,
 	RTCSession,
 	SessionDirection,
 	DTFMOptions,
@@ -24,6 +23,12 @@ import {
 import { customAlphabet } from "nanoid";
 
 const nanoid = customAlphabet("1234567890qwertyuiopasdfghjklzxcvbnm", 16);
+
+export const Originator = {
+	LOCAL: "local",
+	REMOTE: "remote",
+	SYSTEM: "system",
+} as const;
 
 /**
  * События линий
@@ -164,7 +169,7 @@ export type AudioDevice = {
 export function createSipInstance(props: CreateSipInstanceProps) {
 	// Значения по умолчанию
 	const defaultWSUrl = props.ssl ? "wss://webrtc.exolve.ru:8443" : "ws://webrtc.exolve.ru:8080";
-	const defaultRealm = "sip.exolve.ru";
+	const defaultRealm = "80.75.132.120";
 	const defaultStunList = ["stun:webrtc.exolve.ru:3479"];
 
 	const environment = {
@@ -290,7 +295,7 @@ export function createSipInstance(props: CreateSipInstanceProps) {
 		 */
 		onIncomingCall(cb: (args: OnIncomingCallCbArgs) => void) {
 			SIPInstance.on("newRTCSession", (event: IncomingRTCSessionEvent) => {
-				if (event.originator !== 'remote') return;
+				if (event.originator !== Originator.REMOTE) return;
 
 				// Проверяем лимит линий
 				if (props.maxLines && activeCalls.size >= props.maxLines) {
