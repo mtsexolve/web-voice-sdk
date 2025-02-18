@@ -44,12 +44,9 @@ export function CallControls(props: { session: SessionItem }) {
 	};
 
 	const handleHoldToggle = () => {
-		const isOnHold = props.session.RTCSession.isOnHold().local;
-		if (isOnHold) {
-			$sessionMutations.unhold(props.session.RTCSession.id);
-		} else {
-			$sessionMutations.hold(props.session.RTCSession.id);
-		}
+		const { local: isOnHold } = props.session.RTCSession.isOnHold();
+		const fn = isOnHold ? $sessionMutations.unhold : $sessionMutations.hold;
+		fn(props.session.RTCSession.id);
 	};
 
 	return (
