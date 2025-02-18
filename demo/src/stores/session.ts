@@ -182,10 +182,24 @@ const terminate = action($session, "terminate", (_, id: string) => {
 	remove(id);
 });
 
+const hold = action($session, "hold", (_, id: string) => {
+	const sessionItem = get(id);
+	if (!sessionItem?.RTCSession) return;
+	sessionItem.RTCSession.hold();
+});
+
+const unhold = action($session, "unhold", (_, id: string) => {
+	const sessionItem = get(id);
+	if (!sessionItem?.RTCSession) return;
+	sessionItem.RTCSession.unhold();
+});
+
 export const $sessionMutations = {
 	push,
 	remove,
 	updateKey,
 	terminate,
 	setSession,
+	hold,
+	unhold,
 };
