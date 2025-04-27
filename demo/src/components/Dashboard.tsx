@@ -19,9 +19,9 @@ export function Dashboard() {
 				css={{
 					width: 450,
 					margin: "auto",
+					backgroundColor: "$neutral2",
 					padding: "16px",
 					borderRadius: "8px",
-					backgroundColor: "$neutral2",
 				}}>
 				{!!session().length || <BasedControls />}
 				<For each={session()}>{session => <CallControls session={session} />}</For>
