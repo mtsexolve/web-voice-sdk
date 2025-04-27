@@ -411,7 +411,7 @@ export function createSipInstance(props: CreateSipInstanceProps) {
 		 */
 		// prettier-ignore
 		async call(target: string, events?: Partial<CallSessionEvents>) {
-			// Проверяем лимит линий
+			// Проверяем лимит линий до создания сессии
 			if (props.maxLines && activeCalls.size >= props.maxLines) {
 				throw new Error("Maximum calls reached");
 			}
@@ -856,7 +856,6 @@ export function createSipInstance(props: CreateSipInstanceProps) {
 		 * @returns Список аудио устройств
 		 * @throws {Error} Если нет доступа к медиа устройствам
 		 */
-		// prettier-ignore
 		async getAudioDevices(): Promise<AudioDevice[]> {
 			try {
 				await navigator.mediaDevices.getUserMedia({ audio: true });

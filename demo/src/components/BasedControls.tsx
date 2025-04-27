@@ -34,7 +34,7 @@ export function BasedControls() {
 				</Badge>
 			</Box>
 
-			<Box css={{ mt: 24 }}>
+			<Box css={{ "margin-top": "24px" }}>
 				<InputGroup>
 					<InputLeftElement pointerEvents="none" color="$neutral9">
 						<FiPhone />
@@ -46,15 +46,25 @@ export function BasedControls() {
 						placeholder="Номер телефона"
 					/>
 				</InputGroup>
-				<Button onClick={handleStartCall} colorScheme="accent" fullWidth css={{ mt: 12 }} size="sm">
+				<Button
+					onClick={handleStartCall}
+					colorScheme="accent"
+					fullWidth
+					css={{ "margin-top": "12px" }}
+					size="sm">
 					Начать звонок
 				</Button>
 			</Box>
 
-			<Box css={{ mt: 24, fontSize: "0.9em", color: "$neutral10" }}>
+			<Box css={{ "margin-top": "24px", "font-size": "0.9em", color: "$neutral10" }}>
 				Авторизованы как <strong>{settings().sipUserName}</strong>
 			</Box>
-			<Button onClick={resetSettings} css={{ mt: 12 }} size="xs" colorScheme="danger" variant="dashed">
+			<Button
+				onClick={resetSettings}
+				css={{ "margin-top": "12px" }}
+				size="xs"
+				colorScheme="danger"
+				variant="dashed">
 				Сбросить авторизацию
 			</Button>
 		</Box>
