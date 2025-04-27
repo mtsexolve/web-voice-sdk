@@ -856,7 +856,6 @@ export function createSipInstance(props: CreateSipInstanceProps) {
 		 * @returns Список аудио устройств
 		 * @throws {Error} Если нет доступа к медиа устройствам
 		 */
-		// prettier-ignore
 		async getAudioDevices(): Promise<AudioDevice[]> {
 			try {
 				await navigator.mediaDevices.getUserMedia({ audio: true });

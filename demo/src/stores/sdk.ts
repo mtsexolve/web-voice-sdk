@@ -51,6 +51,7 @@ onMount($sdk, () => {
 		ssl: true,
 		sipLogin: settings.sipUserName,
 		sipPassword: settings.sipPassword,
+		debug: true,
 	});
 
 	$sdk.setKey("instance", instance);

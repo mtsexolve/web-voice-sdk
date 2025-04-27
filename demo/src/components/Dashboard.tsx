@@ -14,8 +14,15 @@ export function Dashboard() {
 	console.log(_);
 
 	return (
-		<Box css={{ pt: 64 }}>
-			<Box css={{ width: 450, margin: "auto", backgroundColor: "$neutral2", p: 16, borderRadius: 8 }}>
+		<Box css={{ "padding-top": "64px" }}>
+			<Box
+				css={{
+					width: 450,
+					margin: "auto",
+					padding: "16px",
+					borderRadius: "8px",
+					backgroundColor: "$neutral2",
+				}}>
 				{!!session().length || <BasedControls />}
 				<For each={session()}>{session => <CallControls session={session} />}</For>
 			</Box>
