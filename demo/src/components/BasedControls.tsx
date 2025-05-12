@@ -1,10 +1,16 @@
 import { Badge, Box, Button, Input, InputGroup, InputLeftElement } from "@hope-ui/solid";
 import { FiPhone } from "solid-icons/fi";
-import { $settings, resetSettings } from "../stores/settings.ts";
+import { $settings, Environment, resetSettings } from "../stores/settings.ts";
 import { useStore } from "@nanostores/solid";
 import { $sdk, register, unregister } from "../stores/sdk.ts";
 import { $target } from "../stores/target.ts";
 import { $sessionMutations } from "../stores/session.ts";
+
+const environmentNames = {
+	[Environment.TEST]: "test",
+	[Environment.PRE_PRODUCTION]: "pre production",
+	[Environment.PRODUCTION]: "production",
+};
 
 export function BasedControls() {
 	const sdk = useStore($sdk);
@@ -57,7 +63,8 @@ export function BasedControls() {
 			</Box>
 
 			<Box css={{ "margin-top": "24px", "font-size": "0.9em", color: "$neutral10" }}>
-				Авторизованы как <strong>{settings().sipUserName}</strong>
+				Авторизованы как <strong>{settings().sipUserName}</strong> на зоне{" "}
+				<strong>{environmentNames[settings().environment]}</strong>
 			</Box>
 			<Button
 				onClick={resetSettings}

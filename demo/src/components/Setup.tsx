@@ -1,7 +1,23 @@
-import { Settings, setupSettings } from "../stores/settings.ts";
-import { Box, Button, FormControl, Heading, Input } from "@hope-ui/solid";
+import { Environment, Settings, setupSettings } from "../stores/settings.ts";
+import {
+	Box,
+	Button,
+	FormControl,
+	Heading,
+	Input,
+	Select,
+	SelectContent,
+	SelectIcon,
+	SelectListbox,
+	SelectOption,
+	SelectOptionIndicator,
+	SelectOptionText,
+	SelectPlaceholder,
+	SelectTrigger,
+	SelectValue,
+} from "@hope-ui/solid";
 import { createStore } from "solid-js/store";
-import { object, string, ZodIssue } from "zod";
+import { nativeEnum, object, string, ZodIssue } from "zod";
 import { createMemo, createSignal, JSX } from "solid-js";
 
 export function Setup() {
@@ -30,12 +46,17 @@ export function Setup() {
 		setFormKey("sipPassword", e.currentTarget.value);
 	};
 
+	const handleSelectEnvironment = (environment: Environment) => {
+		setFormKey("environment", environment);
+	};
+
 	const isInvalid = createMemo(() => (key: keyof Settings) => {
 		return !!form.errors[key];
 	});
 
 	const handleSave = async () => {
 		const validationSchema = object({
+			environment: nativeEnum(Environment),
 			sipUserName: string().min(1),
 			sipPassword: string().min(1),
 		});
@@ -64,7 +85,37 @@ export function Setup() {
 				justifyContent: "center",
 			}}>
 			<Box css={{ width: "350px" }}>
-				<Heading css={{ mb: 24 }}>Настройка SIP аккаунта</Heading>
+				<Heading css={{ marginBottom: 24 }}>Настройка SIP аккаунта</Heading>
+
+				<FormControl>
+					<Box css={{ marginBottom: 20 }}>
+						<Select invalid={isInvalid()("environment")} onChange={handleSelectEnvironment}>
+							<SelectTrigger>
+								<SelectPlaceholder>Выберите окружение</SelectPlaceholder>
+								<SelectValue />
+								<SelectIcon />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectListbox>
+									<SelectOption value={Environment.TEST}>
+										<SelectOptionText>test</SelectOptionText>
+										<SelectOptionIndicator />
+									</SelectOption>
+
+									<SelectOption value={Environment.PRE_PRODUCTION}>
+										<SelectOptionText>pre production</SelectOptionText>
+										<SelectOptionIndicator />
+									</SelectOption>
+
+									<SelectOption value={Environment.PRODUCTION}>
+										<SelectOptionText>production</SelectOptionText>
+										<SelectOptionIndicator />
+									</SelectOption>
+								</SelectListbox>
+							</SelectContent>
+						</Select>
+					</Box>
+				</FormControl>
 
 				<FormControl>
 					<Input
@@ -75,7 +126,7 @@ export function Setup() {
 					/>
 				</FormControl>
 
-				<FormControl css={{ mt: 20 }}>
+				<FormControl css={{ marginTop: 20 }}>
 					<Input
 						size="md"
 						type="password"
@@ -89,7 +140,7 @@ export function Setup() {
 					loading={isLoading()}
 					loadingText="Проверка..."
 					onClick={handleSave}
-					css={{ mt: 20 }}
+					css={{ marginTop: 20 }}
 					size="sm"
 					colorScheme="accent">
 					Сохранить
