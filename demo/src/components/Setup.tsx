@@ -18,7 +18,7 @@ import {
 } from "@hope-ui/solid";
 import { createStore } from "solid-js/store";
 import { nativeEnum, object, string, ZodIssue } from "zod";
-import { createMemo, createSignal, JSX } from "solid-js";
+import { createMemo, createSignal, JSX, onMount } from "solid-js";
 
 export function Setup() {
 	const [form, setForm] = createStore<{
@@ -27,6 +27,17 @@ export function Setup() {
 	}>({ values: {}, errors: {} });
 
 	const [isLoading, setIsLoading] = createSignal(false);
+	const [showEnvSelect, setShowEnvSelect] = createSignal(false);
+
+	onMount(() => {
+		const switchEnv = localStorage.getItem("switchEnv");
+		const showSelect = switchEnv === "true";
+		setShowEnvSelect(showSelect);
+
+		if (!showSelect) {
+			setFormKey("environment", Environment.PRODUCTION);
+		}
+	});
 
 	const setFormKey = <T extends keyof Settings>(key: T, value: Settings[T]) => {
 		setForm(v => {
@@ -87,35 +98,37 @@ export function Setup() {
 			<Box css={{ width: "350px" }}>
 				<Heading css={{ marginBottom: 24 }}>Настройка SIP аккаунта</Heading>
 
-				<FormControl>
-					<Box css={{ marginBottom: 20 }}>
-						<Select invalid={isInvalid()("environment")} onChange={handleSelectEnvironment}>
-							<SelectTrigger>
-								<SelectPlaceholder>Выберите окружение</SelectPlaceholder>
-								<SelectValue />
-								<SelectIcon />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectListbox>
-									<SelectOption value={Environment.TEST}>
-										<SelectOptionText>test</SelectOptionText>
-										<SelectOptionIndicator />
-									</SelectOption>
+				{showEnvSelect() && (
+					<FormControl>
+						<Box css={{ marginBottom: 20 }}>
+							<Select invalid={isInvalid()("environment")} onChange={handleSelectEnvironment}>
+								<SelectTrigger>
+									<SelectPlaceholder>Выберите окружение</SelectPlaceholder>
+									<SelectValue />
+									<SelectIcon />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectListbox>
+										<SelectOption value={Environment.TEST}>
+											<SelectOptionText>test</SelectOptionText>
+											<SelectOptionIndicator />
+										</SelectOption>
 
-									<SelectOption value={Environment.PRE_PRODUCTION}>
-										<SelectOptionText>pre production</SelectOptionText>
-										<SelectOptionIndicator />
-									</SelectOption>
+										<SelectOption value={Environment.PRE_PRODUCTION}>
+											<SelectOptionText>pre production</SelectOptionText>
+											<SelectOptionIndicator />
+										</SelectOption>
 
-									<SelectOption value={Environment.PRODUCTION}>
-										<SelectOptionText>production</SelectOptionText>
-										<SelectOptionIndicator />
-									</SelectOption>
-								</SelectListbox>
-							</SelectContent>
-						</Select>
-					</Box>
-				</FormControl>
+										<SelectOption value={Environment.PRODUCTION}>
+											<SelectOptionText>production</SelectOptionText>
+											<SelectOptionIndicator />
+										</SelectOption>
+									</SelectListbox>
+								</SelectContent>
+							</Select>
+						</Box>
+					</FormControl>
+				)}
 
 				<FormControl>
 					<Input
