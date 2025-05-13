@@ -17,6 +17,8 @@ export function BasedControls() {
 	const target = useStore($target);
 	const settings = useStore($settings);
 
+	const isSwitchEnv = !!localStorage.getItem("switchEnv");
+
 	const handleToggleRegistration = () => {
 		sdk().registered ? unregister() : register();
 	};
@@ -64,6 +66,12 @@ export function BasedControls() {
 
 			<Box css={{ "margin-top": "24px", "font-size": "0.9em", color: "$neutral10" }}>
 				Авторизованы как <strong>{settings().sipUserName}</strong>
+				{isSwitchEnv && (
+					<>
+						<br />
+						Среда: <strong>{environmentNames[settings().environment]}</strong>
+					</>
+				)}
 			</Box>
 			<Button
 				onClick={resetSettings}
