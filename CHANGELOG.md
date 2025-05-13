@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/mtsexolve/web-voice-sdk/compare/v1.1.1...v1.1.2) (2025-05-13)
+
+
+### Bug Fixes
+
+* demo lint issues ([ed982ed](https://github.com/mtsexolve/web-voice-sdk/commit/ed982edd7c0e022ee894316aae68b074e3d0aa90))
+
 ## [1.1.1](https://github.com/mtsexolve/web-voice-sdk/compare/v1.1.0...v1.1.1) (2025-05-13)
 
 
