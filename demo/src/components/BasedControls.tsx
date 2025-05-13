@@ -63,8 +63,7 @@ export function BasedControls() {
 			</Box>
 
 			<Box css={{ "margin-top": "24px", "font-size": "0.9em", color: "$neutral10" }}>
-				Авторизованы как <strong>{settings().sipUserName}</strong> на зоне{" "}
-				<strong>{environmentNames[settings().environment]}</strong>
+				Авторизованы как <strong>{settings().sipUserName}</strong>
 			</Box>
 			<Button
 				onClick={resetSettings}
