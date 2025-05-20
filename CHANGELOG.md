@@ -1,3 +1,10 @@
+## [1.1.3](https://github.com/mtsexolve/web-voice-sdk/compare/v1.1.2...v1.1.3) (2025-05-20)
+
+
+### Bug Fixes
+
+* change environments ([239e349](https://github.com/mtsexolve/web-voice-sdk/commit/239e349b2ff73a45b7653a848fba33432c17714d))
+
 ## [1.1.2](https://github.com/mtsexolve/web-voice-sdk/compare/v1.1.1...v1.1.2) (2025-05-13)
 
 
