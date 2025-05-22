@@ -818,7 +818,23 @@ export function createSipInstance(props: CreateSipInstanceProps) {
 			if (!fromSession || !toSession) {
 				throw new Error("Line not found");
 			}
+
+			// Проверяем, что линия установлена
+			if (!fromSession.isEstablished()) {
+				throw new Error("Call must be established");
+			}
+
+			// Отправляем REFER без опции replaces для blind transfer
 			fromSession.refer(toSession.remote_identity.uri.toString());
+
+			// После успешного REFER завершаем текущую линию
+			fromSession.once("referAccepted", () => {
+				fromSession.terminate();
+			});
+
+			fromSession.once("referFailed", () => {
+				throw new Error("Transfer failed");
+			});
 		},
 
 		/**
