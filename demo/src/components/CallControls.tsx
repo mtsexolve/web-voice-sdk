@@ -181,10 +181,16 @@ export function CallControls(props: { session: SessionItem }) {
 			console.log('18. Добавляем обработчик события "confirmed"');
 			toCall.session.on("confirmed", async () => {
 				console.log("19. Звонок подтвержден, выполняем трансфер");
-				currentLine.id && console.log("20. От линии:", currentLine.id, "к линии с ID:", newLineId);
+
+				if (!currentLine) {
+					console.log("20. Ошибка: currentLine не найдена при выполнении трансфера");
+					return;
+				}
+
+				console.log("20. От линии:", currentLine.id, "к линии с ID:", newLineId);
 
 				try {
-					currentLine.id && (await instance.transferCall(currentLine.id, newLineId));
+					await instance.transferCall(currentLine.id, newLineId);
 					console.log("21. Трансфер выполнен успешно");
 
 					// Показываем нотификацию об успешном трансфере
