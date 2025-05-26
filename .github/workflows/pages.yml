@@ -42,6 +42,11 @@ jobs:
         run: npm run build
       - name: Setup Pages
         uses: actions/configure-pages@v4
+        with:
+          enablement: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: false
+        timeout-minutes: 5
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
