@@ -119,6 +119,12 @@ export function CallControls(props: { session: SessionItem }) {
 		console.log("1. handleTransfer начат, номер:", transferNumber());
 		if (!transferNumber()) {
 			console.log("2. Ошибка: Пустой номер");
+			notificationService.show({
+				title: "Ошибка",
+				status: "danger",
+				description: "Введите номер для трансфера",
+				duration: 3000,
+			});
 			return;
 		}
 
@@ -140,8 +146,7 @@ export function CallControls(props: { session: SessionItem }) {
 			const lines = instance.getCallLines();
 			console.log("8. Доступные линии:", lines);
 
-			// Новый подход: вместо сравнения по ID, находим линию по удаленной стороне (URI)
-			// Проверяем по remote_identity.uri от RTCSession, что должно быть стабильным
+			// Находим текущую линию по remote URI
 			const currentTarget = props.session.RTCSession.remote_identity.uri.toString();
 			console.log("9. Текущий remote URI:", currentTarget);
 
@@ -150,100 +155,51 @@ export function CallControls(props: { session: SessionItem }) {
 				return line.target === currentTarget;
 			});
 
-			// Резервный вариант: поиск по номеру телефона
+			// Резервный поиск по номеру телефона
 			if (!currentLine) {
 				const target = props.session.additionalInfo.to || props.session.additionalInfo.from;
 				console.log("11. Резервный поиск по номеру:", target);
-
 				currentLine = lines.find(line => {
+					console.log("12. Сравниваем target линии", line.target, "с номером", target);
 					return line.target.includes(target);
 				});
 			}
 
 			if (!currentLine) {
-				console.log("12. Ошибка: Не найдена текущая линия");
-				return;
+				console.log("13. Ошибка: Не найдена текущая линия для трансфера");
+				throw new Error("Не найдена текущая линия для трансфера");
 			}
 
-			console.log("13. Найдена линия для трансфера:", currentLine);
+			console.log("14. Найдена линия для слепого трансфера:", currentLine);
+			console.log("15. Выполняем слепой трансфер на номер:", transferNumber());
 
-			// Создаем новый звонок на номер для трансфера
-			console.log("14. Пытаемся создать новый звонок на номер:", transferNumber());
-			const toCall = await instance.call(transferNumber());
-			console.log("15. Создан новый звонок:", toCall);
+			// Выполняем слепой трансфер напрямую (БЕЗ создания дополнительного звонка!)
+			await instance.blindTransfer(currentLine.id, transferNumber());
+			console.log("16. Слепой трансфер выполнен успешно");
 
-			// Получаем ID линии нового звонка
-			const newLineId = toCall.getLineId(); // Используем метод getLineId() из SDK
-			console.log("16. ID новой линии:", newLineId);
-			console.log("17. Состояние созданного звонка:", toCall.session.status);
-
-			// После установления соединения выполняем трансфер
-			console.log('18. Добавляем обработчик события "confirmed"');
-			toCall.session.on("confirmed", async () => {
-				console.log("19. Звонок подтвержден, выполняем трансфер");
-
-				if (!currentLine) {
-					console.log("20. Ошибка: currentLine не найдена при выполнении трансфера");
-					return;
-				}
-
-				console.log("20. От линии:", currentLine.id, "к линии с ID:", newLineId);
-
-				try {
-					await instance.transferCall(currentLine.id, newLineId);
-					console.log("21. Трансфер выполнен успешно");
-
-					// Показываем нотификацию об успешном трансфере
-					notificationService.show({
-						title: "Трансфер выполнен",
-						status: "success",
-						description: `Звонок успешно переведен на номер ${transferNumber()}`,
-						duration: 5000,
-					});
-
-					// Завершаем текущий звонок в интерфейсе
-					$sessionMutations.terminate(props.session.RTCSession.id);
-
-					setShowTransfer(false);
-					setTransferNumber("");
-				} catch (transferError) {
-					console.error("22. Ошибка при transferCall:", transferError);
-					console.error("23. Детали ошибки:", transferError);
-
-					// Показываем нотификацию об ошибке
-					notificationService.show({
-						title: "Ошибка при трансфере",
-						status: "danger",
-						description: "Не удалось выполнить перевод звонка",
-						duration: 5000,
-					});
-				}
+			// Показываем нотификацию об успешном трансфере
+			notificationService.show({
+				title: "Трансфер выполнен",
+				status: "success",
+				description: `Звонок переведен на номер ${transferNumber()}`,
+				duration: 5000,
 			});
 
-			// Добавим обработчики ошибок нового звонка
-			toCall.session.on("failed", event => {
-				console.error("24. Ошибка при создании звонка:", event);
-				console.error("25. Причина:", event.cause);
+			console.log("17. Завершаем текущий звонок в интерфейсе");
+			// Завершаем текущий звонок в интерфейсе
+			$sessionMutations.terminate(props.session.RTCSession.id);
 
-				// Показываем нотификацию об ошибке
-				notificationService.show({
-					title: "Ошибка при создании звонка",
-					status: "danger",
-					description: `Причина: ${event.cause}`,
-					duration: 5000,
-				});
-			});
-
-			console.log("26. Обработчики событий установлены");
+			setShowTransfer(false);
+			setTransferNumber("");
+			console.log("18. Трансфер полностью завершен");
 		} catch (error: any) {
-			console.error("27. Общая ошибка трансфера:", error);
-			console.error("28. Стек вызовов:", error.stack);
+			console.error("19. Ошибка при слепом трансфере:", error);
+			console.error("20. Стек вызовов:", error.stack);
 
-			// Показываем нотификацию об общей ошибке
 			notificationService.show({
 				title: "Ошибка при трансфере",
 				status: "danger",
-				description: error.message || "Неизвестная ошибка при трансфере",
+				description: error.message || "Не удалось выполнить перевод звонка",
 				duration: 5000,
 			});
 		}
