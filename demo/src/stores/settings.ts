@@ -19,16 +19,21 @@ export enum Environment {
 
 export const environments = {
 	[Environment.TEST]: {
-		WSUrl: "ws://webrtc-test.exolve.ru:8080",
-		realm: "80.75.132.122:8080",
+		WSUrl: "wss://webrtc-test.exolve.ru:8443",
+		realm: "webrtc-test.exolve.ru:5061",
+		stuns: ["stun:webrtc-test.exolve.ru:3479"],
+		ssl: true,
 	},
 	[Environment.PRE_PRODUCTION]: {
-		WSUrl: "ws://80.75.132.121:8080",
-		realm: "80.75.132.121",
+		WSUrl: "wss://webrtc-pp.exolve.ru:8443",
+		realm: "webrtc-pp.exolve.ru:5061",
+		stuns: ["stun:webrtc-pp.exolve.ru:3479"],
+		ssl: true,
 	},
 	[Environment.PRODUCTION]: {
 		WSUrl: "wss://webrtc.exolve.ru:8443",
-		realm: "80.75.132.120",
+		realm: "webrtc.exolve.ru:5061",
+		stuns: ["stun:webrtc.exolve.ru:3479"],
 		ssl: true,
 	},
 } as const;

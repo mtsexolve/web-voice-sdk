@@ -18,26 +18,21 @@ import {
 } from "@hope-ui/solid";
 import { createStore } from "solid-js/store";
 import { nativeEnum, object, string, ZodIssue } from "zod";
-import { createMemo, createSignal, JSX, onMount } from "solid-js";
+import { createMemo, createSignal, JSX } from "solid-js";
 
 export function Setup() {
 	const [form, setForm] = createStore<{
 		values: Partial<Settings>;
 		errors: Partial<Record<keyof Settings, ZodIssue>>;
-	}>({ values: {}, errors: {} });
-
-	const [isLoading, setIsLoading] = createSignal(false);
-	const [showEnvSelect, setShowEnvSelect] = createSignal(false);
-
-	onMount(() => {
-		const switchEnv = localStorage.getItem("switchEnv");
-		const showSelect = switchEnv === "true";
-		setShowEnvSelect(showSelect);
-
-		if (!showSelect) {
-			setFormKey("environment", Environment.PRODUCTION);
-		}
+	}>({
+		values: {
+			environment: Environment.PRODUCTION,
+		},
+		errors: {},
 	});
+
+	const isSwitchEnv = !!localStorage.getItem("switchEnv");
+	const [isLoading, setIsLoading] = createSignal(false);
 
 	const setFormKey = <T extends keyof Settings>(key: T, value: Settings[T]) => {
 		setForm(v => {
@@ -98,7 +93,7 @@ export function Setup() {
 			<Box css={{ width: "350px" }}>
 				<Heading css={{ marginBottom: 24 }}>Настройка SIP аккаунта</Heading>
 
-				{showEnvSelect() && (
+				{isSwitchEnv && (
 					<FormControl>
 						<Box css={{ marginBottom: 20 }}>
 							<Select invalid={isInvalid()("environment")} onChange={handleSelectEnvironment}>

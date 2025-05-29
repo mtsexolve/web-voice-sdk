@@ -1,6 +1,6 @@
 import { action, map, onMount } from "nanostores";
 import { createSipInstance, SIPInstance } from "@mts-exolve/web-voice-sdk";
-import { $settings } from "./settings.ts";
+import { $settings, environments } from "./settings.ts";
 import { notificationService } from "@hope-ui/solid";
 
 type SDKStore = {
@@ -46,9 +46,10 @@ export const unregister = action($sdk, "unRegister", async store => {
 
 onMount($sdk, () => {
 	const settings = $settings.get();
+	const environment = environments[settings.environment];
 
 	const instance = createSipInstance({
-		ssl: true,
+		...environment,
 		sipLogin: settings.sipUserName,
 		sipPassword: settings.sipPassword,
 	});
