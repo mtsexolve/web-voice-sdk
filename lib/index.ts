@@ -808,6 +808,35 @@ export function createSipInstance(props: CreateSipInstanceProps) {
 		},
 
 		/**
+		 * Слепой перевод звонка (без сопровождения)
+		 * @param fromLineId ID линии, которую переводим
+		 * @param target Номер телефона или SIP URI для перевода
+		 */
+		async blindTransfer(fromLineId: string, target: string) {
+			const fromSession = activeCalls.get(fromLineId);
+			if (!fromSession) {
+				throw new Error("Line not found");
+			}
+
+			// Проверяем, что линия установлена
+			if (!fromSession.isEstablished()) {
+				throw new Error("Call must be established");
+			}
+
+			// Отправляем REFER напрямую на указанный номер
+			fromSession.refer(target);
+
+			// После успешного REFER завершаем текущую линию
+			fromSession.once("referAccepted", () => {
+				fromSession.terminate();
+			});
+
+			fromSession.once("referFailed", () => {
+				throw new Error("Blind transfer failed");
+			});
+		},
+
+		/**
 		 * Объединить две линии (перевод звонка)
 		 * @param fromLineId ID линии, которую переводим
 		 * @param toLineId ID линии, на которую переводим
