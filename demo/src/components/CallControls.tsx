@@ -50,68 +50,32 @@ export function CallControls(props: { session: SessionItem }) {
 
 	const handleHoldToggle = async () => {
 		try {
-			console.log("1. handleHoldToggle начат, текущее состояние:", isHeld() ? "На удержании" : "Активный");
-
 			const { instance } = $sdk.get();
 			if (!instance) {
-				console.log("2. Ошибка: SDK инстанс не найден");
+				console.error("SDK инстанс не найден");
 				return;
 			}
 
-			console.log("3. Текущая сессия ID в RTCSession:", props.session.RTCSession.id);
-			console.log(
-				"3.1. Текущая сессия - дополнительная информация:",
-				JSON.stringify(props.session.additionalInfo),
-			);
-			console.log("3.2. Объект сессии:", props.session.RTCSession);
-
-			// Получаем все линии и выводим их для отладки
-			const lines = instance.getCallLines();
-			console.log("4. Доступные линии:", lines);
-
-			// Пробуем найти по всем возможным идентификаторам
-			let currentLine = lines.find(line => {
-				console.log("4.1. Сравниваем линию", line.id, "с сессией", props.session.RTCSession.id);
-				return line.id === props.session.RTCSession.id;
-			});
-
-			if (!currentLine) {
-				// Пробуем найти по target (номер телефона)
-				currentLine = lines.find(line => {
-					const target = props.session.additionalInfo.to || props.session.additionalInfo.from;
-					console.log("4.2. Сравниваем target линии", line.target, "с целевым номером", target);
-					return line.target.includes(target);
-				});
-			}
-
-			if (!currentLine) {
-				console.log("5. Ошибка: Не найдена текущая линия");
+			const rtcSession = props.session.RTCSession;
+			if (!rtcSession) {
+				console.error("RTC сессия не найдена");
 				return;
 			}
 
-			console.log("6. Найдена линия:", currentLine);
+			// Проверяем реальное состояние удержания из RTCSession
+			const isCurrentlyOnHold = isHeld();
 
-			// Проверяем, находится ли звонок на удержании
-			const currentHoldState = currentLine.isHeld;
-			console.log("7. Текущее состояние удержания:", currentHoldState);
-
-			// Метод hold/unhold для текущей сессии напрямую, не создавая новый звонок
-			if (currentHoldState) {
-				// Снять с удержания
-				console.log("8. Снимаем с удержания напрямую");
-				props.session.RTCSession.unhold();
-				console.log("9. Команда разудержания отправлена");
+			if (isCurrentlyOnHold) {
+				rtcSession.unhold();
 				setIsHeld(false);
+				console.log("Звонок снят с удержания");
 			} else {
-				// Поставить на удержание
-				console.log("8. Ставим на удержание напрямую");
-				props.session.RTCSession.hold();
-				console.log("9. Команда удержания отправлена");
+				rtcSession.hold();
 				setIsHeld(true);
+				console.log("Звонок поставлен на удержание");
 			}
 		} catch (error: any) {
-			console.error("Ошибка при изменении состояния удержания:", error);
-			console.error("Стек вызовов:", error.stack);
+			console.error("Ошибка при изменении состояния удержания:", error.message);
 		}
 	};
 
