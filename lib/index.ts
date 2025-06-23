@@ -190,7 +190,11 @@ export function createSipInstance(props: CreateSipInstanceProps) {
 					urls: props.stunServers || defaultStunList,
 				},
 			],
-		},
+			// Добавить для Safari
+			bundlePolicy: "max-bundle",
+			rtcpMuxPolicy: "require",
+			sdpSemantics: "unified-plan", // Критично для Safari
+		} as RTCConfiguration,
 		rtcOfferConstraints: {
 			offerToReceiveAudio: true,
 			offerToReceiveVideo: false,

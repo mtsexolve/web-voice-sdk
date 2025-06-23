@@ -48,8 +48,14 @@ function createAudioElement(src?: string) {
 		setSrc(src: string) {
 			audioElement.setAttribute("src", src);
 		},
-		setSrcObject(srcObject: MediaProvider) {
+		setSrcObject(srcObject: MediaStream) {
 			audioElement.srcObject = srcObject;
+			if (typeof audioElement.srcObject !== "undefined") {
+				audioElement.srcObject = srcObject;
+			} else {
+				// Fallback для Safari
+				audioElement.src = URL.createObjectURL(srcObject as unknown as Blob);
+			}
 		},
 		play() {
 			audioElement.play().catch(console.log);
@@ -66,9 +72,50 @@ function pipeSessionAudio(session: RTCSession) {
 
 	session.addListener("sdp", () => {
 		session.connection.addEventListener("addstream", (event: unknown) => {
-			const typedEvent = event as { stream: MediaProvider };
+			const typedEvent = event as { stream: MediaStream };
 			audioElement.setSrcObject(typedEvent.stream);
 			audioElement.play();
+
+			console.log("Stream:", typedEvent.stream);
+			console.log("Audio tracks:", typedEvent.stream.getAudioTracks());
+
+			typedEvent.stream?.getAudioTracks().forEach(track => {
+				console.log("Track enabled:", track.enabled);
+				console.log("Track readyState:", track.readyState);
+				console.log("Track muted:", track.muted);
+			});
+		});
+
+		session.connection.addEventListener("removestream", () => {
+			audioElement.stop();
+		});
+
+		session.connection.addEventListener("track", (event: unknown) => {
+			const typedEvent = event as { track: MediaStreamTrack; streams: MediaStream[] };
+			console.log("Track:", typedEvent.track);
+			console.log("Track enabled:", typedEvent.track.enabled);
+			console.log("Track readyState:", typedEvent.track.readyState);
+			console.log("Track muted:", typedEvent.track.muted);
+
+			// Для Safari: создать MediaStream из track и воспроизвести
+			if (typedEvent.track.kind === "audio") {
+				const stream = typedEvent.streams[0] || new MediaStream([typedEvent.track]);
+				console.log("Creating audio from track for Safari");
+				audioElement.setSrcObject(stream);
+				audioElement.play();
+			}
+
+			typedEvent.track.addEventListener("enabledchange", () => {
+				console.log("Track enabled:", typedEvent.track.enabled);
+			});
+
+			typedEvent.track.addEventListener("readystatechange", () => {
+				console.log("Track readyState:", typedEvent.track.readyState);
+			});
+
+			typedEvent.track.addEventListener("mutechange", () => {
+				console.log("Track muted:", typedEvent.track.muted);
+			});
 		});
 	});
 
