@@ -190,9 +190,7 @@ export function createSipInstance(props: CreateSipInstanceProps) {
 					urls: props.stunServers || defaultStunList,
 				},
 			],
-			// Добавить для Safari
-			bundlePolicy: "max-bundle",
-			rtcpMuxPolicy: "require",
+			// Для Safari - без принудительного BUNDLE
 			sdpSemantics: "unified-plan", // Критично для Safari
 		} as RTCConfiguration,
 		rtcOfferConstraints: {
