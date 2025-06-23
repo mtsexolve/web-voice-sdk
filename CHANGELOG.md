@@ -1,3 +1,11 @@
+## [1.1.4](https://github.com/mtsexolve/web-voice-sdk/compare/v1.1.3...v1.1.4) (2025-06-23)
+
+
+### Bug Fixes
+
+* play with safari ([b6fcf6c](https://github.com/mtsexolve/web-voice-sdk/commit/b6fcf6cd365faf717671bd2f21ed66be6271aad2))
+* play with safari ([36bfc28](https://github.com/mtsexolve/web-voice-sdk/commit/36bfc28eee0ace5db82787e277b46ad04342de67))
+
 ## [1.1.3](https://github.com/mtsexolve/web-voice-sdk/compare/v1.1.2...v1.1.3) (2025-05-20)
 
 
